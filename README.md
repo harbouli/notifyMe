@@ -14,12 +14,14 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
 ## Features
 
 ### Authentication
+
 - User registration and authentication
 - JWT access tokens (15 minutes expiry)
 - JWT refresh tokens (7 days expiry)
 - Password hashing with bcrypt
 
 ### Notifications
+
 - Firebase Cloud Messaging (FCM) for push notifications
 - SMTP email notifications with TLS support
 - Notification history and status tracking
@@ -27,6 +29,7 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
 - Topic-based push notifications
 
 ### Infrastructure
+
 - GORM ORM with PostgreSQL
 - Clean hexagonal architecture
 - CORS middleware
@@ -35,18 +38,21 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
 ## API Endpoints
 
 ### Public Endpoints
+
 - `POST /api/v1/auth/register` - User registration
 - `POST /api/v1/auth/login` - User login
 - `POST /api/v1/auth/refresh` - Refresh access token
 - `GET /health` - Health check
 
 ### Protected Endpoints
+
 - `POST /api/v1/auth/logout` - Logout current session
 - `POST /api/v1/auth/logout-all` - Logout all sessions
 - `GET /api/v1/auth/profile` - Get user profile
 - `GET /api/v1/protected` - Example protected route
 
 ### Notification Endpoints
+
 - `POST /api/v1/notifications/push` - Send push notification (public)
 - `POST /api/v1/notifications/email` - Send email notification (public)
 - `POST /api/v1/notifications/` - Create notification (protected)
@@ -55,14 +61,16 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
 - `PUT /api/v1/notifications/:id/read` - Mark notification as read (protected)
 
 ### Documentation
+
 - `GET /swagger/index.html` - Interactive Swagger/OpenAPI documentation
 - `GET /health` - Health check endpoint
 
 ## Setup
 
 1. **Clone and setup:**
+
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/harbouli/notifyMe
    cd notifyMe
    cp .env.example .env
    ```
@@ -71,14 +79,17 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
    Edit the `.env` file with your database credentials, JWT secret, and notification settings.
 
    **Required for Firebase notifications:**
+
    - Set `FIREBASE_ENABLED=true`
    - Set `FIREBASE_CREDENTIALS_PATH` to your Firebase service account JSON file path
-   
+
    **Required for email notifications:**
+
    - Set `EMAIL_ENABLED=true`
    - Configure SMTP settings (SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL)
 
 3. **Install dependencies:**
+
    ```bash
    go mod tidy
    ```
@@ -87,10 +98,11 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
    Make sure PostgreSQL is running and create a database named `notifyme_db`.
 
 5. **Run the application:**
+
    ```bash
    # Development with hot reload (recommended)
    air
-   
+
    # Or run normally
    go run cmd/api/main.go
    ```
@@ -103,6 +115,7 @@ The server will start on `http://localhost:8080`.
 ## API Usage Examples
 
 ### Register a new user:
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/register \
   -H "Content-Type: application/json" \
@@ -116,6 +129,7 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
 ```
 
 ### Login:
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
@@ -126,12 +140,14 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 ```
 
 ### Access protected endpoint:
+
 ```bash
 curl -X GET http://localhost:8080/api/v1/auth/profile \
   -H "Authorization: Bearer <your-access-token>"
 ```
 
 ### Refresh tokens:
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/refresh \
   -H "Content-Type: application/json" \
@@ -143,6 +159,7 @@ curl -X POST http://localhost:8080/api/v1/auth/refresh \
 ## Notification Usage Examples
 
 ### Send push notification:
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/notifications/push \
   -H "Content-Type: application/json" \
@@ -157,6 +174,7 @@ curl -X POST http://localhost:8080/api/v1/notifications/push \
 ```
 
 ### Send email notification:
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/notifications/email \
   -H "Content-Type: application/json" \
@@ -168,6 +186,7 @@ curl -X POST http://localhost:8080/api/v1/notifications/email \
 ```
 
 ### Create notification (requires authentication):
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/notifications/ \
   -H "Content-Type: application/json" \
@@ -181,6 +200,7 @@ curl -X POST http://localhost:8080/api/v1/notifications/ \
 ```
 
 ### Get user notifications:
+
 ```bash
 curl -X GET "http://localhost:8080/api/v1/notifications/user/user-uuid?limit=10&offset=0" \
   -H "Authorization: Bearer <your-access-token>"
@@ -191,7 +211,7 @@ curl -X GET "http://localhost:8080/api/v1/notifications/user/user-uuid?limit=10&
 The application includes comprehensive Swagger/OpenAPI documentation that provides:
 
 - **Interactive API Explorer**: Test all endpoints directly from the browser
-- **Request/Response Schemas**: Complete data models for all API operations  
+- **Request/Response Schemas**: Complete data models for all API operations
 - **Authentication Support**: Built-in Bearer token authentication
 - **Real-time Testing**: Execute API calls with live data
 
@@ -219,6 +239,7 @@ swag init -g cmd/api/main.go -o docs
 This project includes Air for hot reloading during development:
 
 ### Installation
+
 Air is automatically installed when you run `go mod tidy`. To install it globally:
 
 ```bash
@@ -226,6 +247,7 @@ go install github.com/air-verse/air@latest
 ```
 
 ### Usage
+
 ```bash
 # Start development server with hot reload
 air
@@ -235,6 +257,7 @@ air
 ```
 
 ### Hot Reload Features
+
 - **Automatic Restart**: Server restarts on file changes
 - **Fast Builds**: Incremental compilation for quick feedback
 - **Excluded Files**: Test files and docs are ignored
@@ -267,7 +290,7 @@ notifyMe/
 │   └── logger/                    # Logging utilities
 ├── docs/                          # Generated Swagger documentation
 │   ├── docs.go                   # Generated Go documentation
-│   ├── swagger.json              # OpenAPI JSON specification  
+│   ├── swagger.json              # OpenAPI JSON specification
 │   └── swagger.yaml              # OpenAPI YAML specification
 ├── .air.toml                      # Air hot reload configuration
 ├── .env.example                   # Environment variables example
@@ -279,6 +302,7 @@ notifyMe/
 ## Dependencies
 
 ### Core
+
 - **Gin**: HTTP web framework
 - **GORM**: ORM library with PostgreSQL driver
 - **JWT**: JSON Web Token implementation
@@ -287,15 +311,18 @@ notifyMe/
 - **Godotenv**: Environment variable loading
 
 ### Notifications
+
 - **Firebase SDK**: Firebase Cloud Messaging for push notifications
 - **Gomail**: SMTP email sending with TLS support
 - **Google API**: Authentication and service options for Firebase
 
 ### Documentation
+
 - **Swagger**: OpenAPI documentation generation and serving
 - **Gin-Swagger**: Swagger middleware for Gin framework
 
 ### Development
+
 - **Air**: Hot reload for Go applications during development
 
 ## Security Features
@@ -321,11 +348,13 @@ To extend this backend:
 ## Firebase Setup
 
 1. **Create Firebase Project:**
+
    - Go to [Firebase Console](https://console.firebase.google.com/)
    - Create a new project or use existing one
    - Enable Cloud Messaging
 
 2. **Generate Service Account:**
+
    - Go to Project Settings → Service Accounts
    - Click "Generate new private key"
    - Download the JSON file
@@ -339,11 +368,13 @@ To extend this backend:
 ## Email Setup
 
 ### Gmail Configuration:
+
 1. Enable 2-factor authentication
 2. Generate an App Password
 3. Use App Password as `SMTP_PASSWORD`
 
 ### Other SMTP Providers:
+
 - **Outlook**: smtp-mail.outlook.com:587
 - **Yahoo**: smtp.mail.yahoo.com:587
 - **Custom SMTP**: Configure your provider's settings
@@ -355,7 +386,7 @@ To extend this backend:
 FIREBASE_ENABLED=true|false
 FIREBASE_CREDENTIALS_PATH=/path/to/service-account.json
 
-# Email Configuration  
+# Email Configuration
 EMAIL_ENABLED=true|false
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587

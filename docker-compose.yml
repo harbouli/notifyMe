@@ -3,9 +3,9 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: hexagon_postgres
+    container_name: notifyme_postgres
     environment:
-      POSTGRES_DB: hexagon_db
+      POSTGRES_DB: notifyme_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
