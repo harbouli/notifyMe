@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 
-	"hexagon-golang/internal/domain/entity"
+	"notifyMe/internal/domain/entity"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

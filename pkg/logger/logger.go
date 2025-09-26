@@ -11,26 +11,26 @@ type Logger struct {
 
 func New() *Logger {
 	return &Logger{
-		Logger: log.New(os.Stdout, "[HEXAGON] ", log.LstdFlags|log.Lshortfile),
+		Logger: log.New(os.Stdout, "[NotifyMe] ", log.LstdFlags|log.Lshortfile),
 	}
 }
 
 func (l *Logger) Info(v ...interface{}) {
-	l.SetPrefix("[HEXAGON] [INFO] ")
+	l.SetPrefix("[NotifyMe] [INFO] ")
 	l.Println(v...)
 }
 
 func (l *Logger) Error(v ...interface{}) {
-	l.SetPrefix("[HEXAGON] [ERROR] ")
+	l.SetPrefix("[NotifyMe] [ERROR] ")
 	l.Println(v...)
 }
 
 func (l *Logger) Debug(v ...interface{}) {
-	l.SetPrefix("[HEXAGON] [DEBUG] ")
+	l.SetPrefix("[NotifyMe] [DEBUG] ")
 	l.Println(v...)
 }
 
 func (l *Logger) Warn(v ...interface{}) {
-	l.SetPrefix("[HEXAGON] [WARN] ")
+	l.SetPrefix("[NotifyMe] [WARN] ")
 	l.Println(v...)
 }

@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"hexagon-golang/internal/domain/entity"
-	"hexagon-golang/internal/domain/repository"
+	"notifyMe/internal/domain/entity"
+	"notifyMe/internal/domain/repository"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

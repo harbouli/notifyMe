@@ -1,6 +1,6 @@
-# Hexagon Backend - Go Authentication Service
+# NotifyMe - Notification Service API
 
-A clean architecture backend service built with Go, implementing JWT authentication, Firebase push notifications, and email notifications using hexagonal architecture patterns.
+NotifyMe is a comprehensive notification service API built with Go and clean architecture principles. It provides JWT authentication, Firebase push notifications, and email notifications with hot reload development support.
 
 ## Architecture
 
@@ -63,7 +63,7 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
 1. **Clone and setup:**
    ```bash
    git clone <repository-url>
-   cd hexagon-golang
+   cd notifyMe
    cp .env.example .env
    ```
 
@@ -84,10 +84,14 @@ This project follows the hexagonal architecture (ports and adapters) pattern:
    ```
 
 4. **Set up PostgreSQL:**
-   Make sure PostgreSQL is running and create a database named `hexagon_db`.
+   Make sure PostgreSQL is running and create a database named `notifyme_db`.
 
 5. **Run the application:**
    ```bash
+   # Development with hot reload (recommended)
+   air
+   
+   # Or run normally
    go run cmd/api/main.go
    ```
 
@@ -210,10 +214,36 @@ go install github.com/swaggo/swag/cmd/swag@latest
 swag init -g cmd/api/main.go -o docs
 ```
 
+## Hot Reload Development
+
+This project includes Air for hot reloading during development:
+
+### Installation
+Air is automatically installed when you run `go mod tidy`. To install it globally:
+
+```bash
+go install github.com/air-verse/air@latest
+```
+
+### Usage
+```bash
+# Start development server with hot reload
+air
+
+# The server will automatically restart when you modify Go files
+# Configuration is stored in .air.toml
+```
+
+### Hot Reload Features
+- **Automatic Restart**: Server restarts on file changes
+- **Fast Builds**: Incremental compilation for quick feedback
+- **Excluded Files**: Test files and docs are ignored
+- **Build Logs**: Compilation errors shown in terminal
+
 ## Project Structure
 
 ```
-hexagon-golang/
+notifyMe/
 ├── cmd/
 │   └── api/
 │       └── main.go                 # Application entry point
@@ -239,6 +269,7 @@ hexagon-golang/
 │   ├── docs.go                   # Generated Go documentation
 │   ├── swagger.json              # OpenAPI JSON specification  
 │   └── swagger.yaml              # OpenAPI YAML specification
+├── .air.toml                      # Air hot reload configuration
 ├── .env.example                   # Environment variables example
 ├── .env                          # Environment variables (created)
 ├── go.mod                         # Go module definition
@@ -263,6 +294,9 @@ hexagon-golang/
 ### Documentation
 - **Swagger**: OpenAPI documentation generation and serving
 - **Gin-Swagger**: Swagger middleware for Gin framework
+
+### Development
+- **Air**: Hot reload for Go applications during development
 
 ## Security Features
 
@@ -328,5 +362,5 @@ SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
 FROM_EMAIL=your-email@gmail.com
-FROM_NAME=Your App Name
+FROM_NAME=NotifyMe
 ```

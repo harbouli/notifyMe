@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"hexagon-golang/internal/application/usecase"
+	"notifyMe/internal/application/usecase"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -58,7 +58,7 @@ func (s *jwtService) generateToken(userID uuid.UUID, tokenType string, expiry ti
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(expiry)),
 			NotBefore: jwt.NewNumericDate(now),
-			Issuer:    "hexagon-backend",
+			Issuer:    "notifyme-backend",
 			Subject:   userID.String(),
 		},
 	}

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"hexagon-golang/internal/domain/entity"
-	"hexagon-golang/internal/domain/repository"
-	"hexagon-golang/internal/infrastructure/notification"
+	"notifyMe/internal/domain/entity"
+	"notifyMe/internal/domain/repository"
+	"notifyMe/internal/infrastructure/notification"
 
 	"github.com/google/uuid"
 )

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"hexagon-golang/internal/application/usecase"
+	"notifyMe/internal/application/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

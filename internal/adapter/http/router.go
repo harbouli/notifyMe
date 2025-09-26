@@ -1,8 +1,8 @@
 package http
 
 import (
-	"hexagon-golang/internal/adapter/http/handler"
-	"hexagon-golang/internal/adapter/http/middleware"
+	"notifyMe/internal/adapter/http/handler"
+	"notifyMe/internal/adapter/http/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

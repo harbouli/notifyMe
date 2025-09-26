@@ -109,13 +109,13 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: A clean architecture backend service with JWT authentication, Firebase
+  description: NotifyMe - A notification service with JWT authentication, Firebase
     push notifications, and email notifications.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
   termsOfService: http://swagger.io/terms/
-  title: Hexagon Backend API
+  title: NotifyMe API
   version: "1.0"
 paths:
   /auth/login:

@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "A clean architecture backend service with JWT authentication, Firebase push notifications, and email notifications.",
-        "title": "Hexagon Backend API",
+        "description": "NotifyMe - A notification service with JWT authentication, Firebase push notifications, and email notifications.",
+        "title": "NotifyMe API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",

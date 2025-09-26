@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"hexagon-golang/internal/application/usecase"
+	"notifyMe/internal/application/usecase"
 
 	"github.com/gin-gonic/gin"
 )

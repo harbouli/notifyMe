@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"hexagon-golang/internal/application/usecase"
-	"hexagon-golang/internal/domain/entity"
+	"notifyMe/internal/application/usecase"
+	"notifyMe/internal/domain/entity"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

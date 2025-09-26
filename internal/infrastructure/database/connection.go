@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"hexagon-golang/internal/domain/entity"
+	"notifyMe/internal/domain/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

@@ -4,23 +4,23 @@ import (
 	"fmt"
 	"log"
 
-	"hexagon-golang/internal/adapter/http"
-	"hexagon-golang/internal/adapter/http/handler"
-	"hexagon-golang/internal/adapter/http/middleware"
-	"hexagon-golang/internal/application/usecase"
-	"hexagon-golang/internal/infrastructure/config"
-	"hexagon-golang/internal/infrastructure/database"
-	"hexagon-golang/internal/infrastructure/jwt"
-	"hexagon-golang/internal/infrastructure/notification"
+	"notifyMe/internal/adapter/http"
+	"notifyMe/internal/adapter/http/handler"
+	"notifyMe/internal/adapter/http/middleware"
+	"notifyMe/internal/application/usecase"
+	"notifyMe/internal/infrastructure/config"
+	"notifyMe/internal/infrastructure/database"
+	"notifyMe/internal/infrastructure/jwt"
+	"notifyMe/internal/infrastructure/notification"
 
 	"github.com/gin-gonic/gin"
 
-	_ "hexagon-golang/docs" // Import generated docs
+	_ "notifyMe/docs" // Import generated docs
 )
 
-// @title Hexagon Backend API
+// @title NotifyMe API
 // @version 1.0
-// @description A clean architecture backend service with JWT authentication, Firebase push notifications, and email notifications.
+// @description NotifyMe - A notification service with JWT authentication, Firebase push notifications, and email notifications.
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support

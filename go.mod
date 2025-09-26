@@ -1,4 +1,4 @@
-module hexagon-golang
+module notifyMe
 
 go 1.24.0
 
