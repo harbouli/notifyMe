@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Database DatabaseConfig
-	JWT      JWTConfig
+	Server       ServerConfig
+	Database     DatabaseConfig
+	JWT          JWTConfig
+	Notification NotificationConfig
 }
 
 type ServerConfig struct {
@@ -35,12 +36,33 @@ type JWTConfig struct {
 	RefreshTokenExpiry   time.Duration
 }
 
+type NotificationConfig struct {
+	Firebase FirebaseConfig
+	Email    EmailConfig
+}
+
+type FirebaseConfig struct {
+	CredentialsPath string
+	Enabled         bool
+}
+
+type EmailConfig struct {
+	SMTPHost     string
+	SMTPPort     int
+	SMTPUsername string
+	SMTPPassword string
+	FromEmail    string
+	FromName     string
+	Enabled      bool
+}
+
 func Load() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 	}
 
 	accessExpiry, _ := strconv.Atoi(getEnv("JWT_ACCESS_EXPIRY_MINUTES", "15"))
 	refreshExpiry, _ := strconv.Atoi(getEnv("JWT_REFRESH_EXPIRY_HOURS", "168"))
+	smtpPort, _ := strconv.Atoi(getEnv("SMTP_PORT", "587"))
 
 	return &Config{
 		Server: ServerConfig{
@@ -60,6 +82,21 @@ func Load() (*Config, error) {
 			SecretKey:            getEnv("JWT_SECRET", "your-secret-key-change-this-in-production"),
 			AccessTokenExpiry:    time.Duration(accessExpiry) * time.Minute,
 			RefreshTokenExpiry:   time.Duration(refreshExpiry) * time.Hour,
+		},
+		Notification: NotificationConfig{
+			Firebase: FirebaseConfig{
+				CredentialsPath: getEnv("FIREBASE_CREDENTIALS_PATH", ""),
+				Enabled:         getEnv("FIREBASE_ENABLED", "false") == "true",
+			},
+			Email: EmailConfig{
+				SMTPHost:     getEnv("SMTP_HOST", "smtp.gmail.com"),
+				SMTPPort:     smtpPort,
+				SMTPUsername: getEnv("SMTP_USERNAME", ""),
+				SMTPPassword: getEnv("SMTP_PASSWORD", ""),
+				FromEmail:    getEnv("FROM_EMAIL", ""),
+				FromName:     getEnv("FROM_NAME", "Hexagon App"),
+				Enabled:      getEnv("EMAIL_ENABLED", "false") == "true",
+			},
 		},
 	}, nil
 }

@@ -26,3 +26,13 @@ type RefreshTokenRepository interface {
 	DeleteByUserID(ctx context.Context, userID uuid.UUID) error
 	RevokeByUserID(ctx context.Context, userID uuid.UUID) error
 }
+
+type NotificationRepository interface {
+	Create(ctx context.Context, notification *entity.Notification) error
+	GetByID(ctx context.Context, id uuid.UUID) (*entity.Notification, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]*entity.Notification, error)
+	Update(ctx context.Context, notification *entity.Notification) error
+	Delete(ctx context.Context, id uuid.UUID) error
+	UpdateStatus(ctx context.Context, id uuid.UUID, status entity.NotificationStatus) error
+	GetPendingNotifications(ctx context.Context, limit int) ([]*entity.Notification, error)
+}

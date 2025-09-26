@@ -13,6 +13,7 @@ type User struct {
 	PasswordHash string    `json:"-" gorm:"not null"`
 	FirstName    string    `json:"first_name"`
 	LastName     string    `json:"last_name"`
+	FCMToken     string    `json:"fcm_token"`
 	IsActive     bool      `json:"is_active" gorm:"default:true"`
 	CreatedAt    time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt    time.Time `json:"updated_at" gorm:"autoUpdateTime"`

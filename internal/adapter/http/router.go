@@ -5,11 +5,14 @@ import (
 	"hexagon-golang/internal/adapter/http/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRoutes(
 	router *gin.Engine,
 	authHandler *handler.AuthHandler,
+	notificationHandler *handler.NotificationHandler,
 	authMiddleware *middleware.AuthMiddleware,
 ) {
 	router.Use(authMiddleware.CORS())
@@ -31,6 +34,21 @@ func SetupRoutes(
 			}
 		}
 
+		notifications := api.Group("/notifications")
+		{
+			notifications.POST("/push", notificationHandler.SendPushNotification)
+			notifications.POST("/email", notificationHandler.SendEmailNotification)
+			
+			authorized := notifications.Group("/")
+			authorized.Use(authMiddleware.RequireAuth())
+			{
+				authorized.POST("/", notificationHandler.CreateNotification)
+				authorized.GET("/user/:user_id", notificationHandler.GetUserNotifications)
+				authorized.GET("/:id", notificationHandler.GetNotificationByID)
+				authorized.PUT("/:id/read", notificationHandler.MarkAsRead)
+			}
+		}
+
 		protected := api.Group("/")
 		protected.Use(authMiddleware.RequireAuth())
 		{
@@ -43,10 +61,19 @@ func SetupRoutes(
 		}
 	}
 
+	// Health check endpoint
+	// @Summary Health check
+	// @Description Check if the server is running
+	// @Tags System
+	// @Produce json
+	// @Success 200 {object} map[string]interface{} "Server is running"
+	// @Router /health [get]
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status":  "OK",
 			"message": "Server is running",
 		})
 	})
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

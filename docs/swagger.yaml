@@ -1,0 +1,506 @@
+basePath: /api/v1
+definitions:
+  entity.EmailNotificationRequest:
+    properties:
+      body:
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      subject:
+        type: string
+      to:
+        type: string
+    required:
+    - body
+    - subject
+    - to
+    type: object
+  entity.NotificationRequest:
+    properties:
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      title:
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/entity.NotificationType'
+        enum:
+        - email
+        - push
+      user_id:
+        type: string
+    required:
+    - message
+    - title
+    - type
+    - user_id
+    type: object
+  entity.NotificationType:
+    enum:
+    - email
+    - push
+    type: string
+    x-enum-varnames:
+    - NotificationTypeEmail
+    - NotificationTypePush
+  entity.PushNotificationRequest:
+    properties:
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      title:
+        type: string
+      token:
+        type: string
+    required:
+    - message
+    - title
+    - token
+    type: object
+  usecase.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  usecase.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  usecase.RegisterRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: A clean architecture backend service with JWT authentication, Firebase
+    push notifications, and email notifications.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Hexagon Backend API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful with tokens
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: User login
+      tags:
+      - Authentication
+  /auth/logout:
+    post:
+      description: Logout user from current session
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logged out successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Logout user
+      tags:
+      - Authentication
+  /auth/logout-all:
+    post:
+      description: Logout user from all sessions/devices
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logged out from all devices successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Logout from all devices
+      tags:
+      - Authentication
+  /auth/profile:
+    get:
+      description: Get current user profile information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - Authentication
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Get new access and refresh tokens using refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tokens refreshed successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Refresh access token
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with email, username, and password
+      parameters:
+      - description: User registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - Authentication
+  /notifications/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new notification for a user
+      parameters:
+      - description: Notification data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.NotificationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Notification created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a notification
+      tags:
+      - Notifications
+  /notifications/{id}:
+    get:
+      description: Get a specific notification by its ID
+      parameters:
+      - description: Notification ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Notification retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Notification not found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get notification by ID
+      tags:
+      - Notifications
+  /notifications/{id}/read:
+    put:
+      description: Mark a notification as read/viewed
+      parameters:
+      - description: Notification ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Notification marked as read
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Mark notification as read
+      tags:
+      - Notifications
+  /notifications/email:
+    post:
+      consumes:
+      - application/json
+      description: Send an email notification via SMTP
+      parameters:
+      - description: Email notification data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.EmailNotificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email notification sent successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Send email notification
+      tags:
+      - Notifications
+  /notifications/push:
+    post:
+      consumes:
+      - application/json
+      description: Send a push notification via Firebase Cloud Messaging
+      parameters:
+      - description: Push notification data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PushNotificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Push notification sent successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Send push notification
+      tags:
+      - Notifications
+  /notifications/user/{user_id}:
+    get:
+      description: Get notifications for a specific user with pagination
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - default: 10
+        description: Limit number of results
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User notifications retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user notifications
+      tags:
+      - Notifications
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
