@@ -3,9 +3,12 @@ package handler
 import (
 	"context"
 	"net/http"
+	"crypto/rand"
+	"encoding/base64"
 
 	"notifyMe/internal/application/usecase"
 	"notifyMe/internal/domain/entity"
+	"notifyMe/internal/infrastructure/auth0"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,12 +24,16 @@ type AuthUseCaseInterface interface {
 }
 
 type AuthHandler struct {
-	authUseCase AuthUseCaseInterface
+	authUseCase   AuthUseCaseInterface
+	auth0Service  *auth0.Auth0Service
+	jwtService    usecase.JWTService
 }
 
-func NewAuthHandler(authUseCase AuthUseCaseInterface) *AuthHandler {
+func NewAuthHandler(authUseCase AuthUseCaseInterface, auth0Service *auth0.Auth0Service, jwtService usecase.JWTService) *AuthHandler {
 	return &AuthHandler{
-		authUseCase: authUseCase,
+		authUseCase:  authUseCase,
+		auth0Service: auth0Service,
+		jwtService:   jwtService,
 	}
 }
 
@@ -198,4 +205,114 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 		"message": "Profile retrieved successfully",
 		"user":    user,
 	})
+}
+
+// Auth0Login godoc
+// @Summary Initiate Auth0 Google OAuth login
+// @Description Redirects to Auth0 for Google OAuth authentication
+// @Tags Authentication
+// @Produce json
+// @Param redirect_uri query string false "Redirect URI after authentication"
+// @Success 200 {object} map[string]interface{} "Authorization URL"
+// @Failure 500 {object} map[string]interface{} "Internal server error"
+// @Router /auth/auth0/login [get]
+func (h *AuthHandler) Auth0Login(c *gin.Context) {
+	if h.auth0Service == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Auth0 service not configured"})
+		return
+	}
+
+	redirectURI := c.Query("redirect_uri")
+	if redirectURI == "" {
+		redirectURI = "http://localhost:8080/api/v1/auth/auth0/callback"
+	}
+
+	// Generate a random state for CSRF protection
+	state, err := generateRandomState()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate state"})
+		return
+	}
+
+	// Store state in session/cookie (simplified for demo)
+	c.SetCookie("auth0_state", state, 600, "/", "", false, true)
+
+	authURL := h.auth0Service.GetAuthorizationURL(redirectURI, state)
+
+	c.JSON(http.StatusOK, gin.H{
+		"authorization_url": authURL,
+		"state":             state,
+	})
+}
+
+// Auth0Callback godoc
+// @Summary Handle Auth0 OAuth callback
+// @Description Handles the callback from Auth0 after user authentication
+// @Tags Authentication
+// @Produce json
+// @Param code query string true "Authorization code from Auth0"
+// @Param state query string true "State parameter for CSRF protection"
+// @Success 200 {object} map[string]interface{} "Login successful"
+// @Failure 400 {object} map[string]interface{} "Bad request"
+// @Failure 401 {object} map[string]interface{} "Unauthorized"
+// @Failure 500 {object} map[string]interface{} "Internal server error"
+// @Router /auth/auth0/callback [get]
+func (h *AuthHandler) Auth0Callback(c *gin.Context) {
+	if h.auth0Service == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Auth0 service not configured"})
+		return
+	}
+
+	code := c.Query("code")
+	state := c.Query("state")
+	storedState, err := c.Cookie("auth0_state")
+
+	if err != nil || state != storedState {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state parameter"})
+		return
+	}
+
+	if code == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization code missing"})
+		return
+	}
+
+	// Clear the state cookie
+	c.SetCookie("auth0_state", "", -1, "/", "", false, true)
+
+	redirectURI := "http://localhost:8080/api/v1/auth/auth0/callback"
+
+	// Exchange code for token
+	tokenResp, err := h.auth0Service.ExchangeCodeForToken(code, redirectURI)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to exchange code for token"})
+		return
+	}
+
+	// Validate the token and get user info
+	auth0User, err := h.auth0Service.ValidateAuth0Token(tokenResp.AccessToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	// This is a simplified approach - in a real app you'd want to inject the user repository
+	// For now, we'll create a mock or modify this to work with your existing architecture
+	c.JSON(http.StatusOK, gin.H{
+		"message":    "Auth0 authentication successful",
+		"user":       auth0User,
+		"token":      tokenResp.AccessToken,
+		"token_type": tokenResp.TokenType,
+		"expires_in": tokenResp.ExpiresIn,
+	})
+}
+
+// generateRandomState generates a random state string for CSRF protection
+func generateRandomState() (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(b), nil
 }

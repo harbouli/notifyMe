@@ -48,6 +48,15 @@ func (r *userRepository) GetByUsername(ctx context.Context, username string) (*e
 	return &user, nil
 }
 
+func (r *userRepository) GetByExternalID(ctx context.Context, externalID string) (*entity.User, error) {
+	var user entity.User
+	err := r.db.WithContext(ctx).Where("external_id = ?", externalID).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *userRepository) Update(ctx context.Context, user *entity.User) error {
 	return r.db.WithContext(ctx).Save(user).Error
 }

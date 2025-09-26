@@ -8,6 +8,7 @@ import (
 	"notifyMe/internal/adapter/http/handler"
 	"notifyMe/internal/adapter/http/middleware"
 	"notifyMe/internal/application/usecase"
+	"notifyMe/internal/infrastructure/auth0"
 	"notifyMe/internal/infrastructure/config"
 	"notifyMe/internal/infrastructure/database"
 	"notifyMe/internal/infrastructure/jwt"
@@ -93,10 +94,25 @@ func main() {
 		emailService = notification.NewEmailService(emailConfig)
 	}
 
+	// Initialize Auth0 service if enabled
+	var auth0Service *auth0.Auth0Service
+	if cfg.Auth0.Enabled {
+		auth0Config := &auth0.Auth0Config{
+			Domain:       cfg.Auth0.Domain,
+			ClientID:     cfg.Auth0.ClientID,
+			ClientSecret: cfg.Auth0.ClientSecret,
+			Audience:     cfg.Auth0.Audience,
+		}
+		auth0Service, err = auth0.NewAuth0Service(auth0Config)
+		if err != nil {
+			log.Printf("Warning: Failed to initialize Auth0 service: %v", err)
+		}
+	}
+
 	authUseCase := usecase.NewAuthUseCase(userRepo, refreshTokenRepo, jwtService)
 	notificationUseCase := usecase.NewNotificationUseCase(notificationRepo, userRepo, firebaseService, emailService)
 
-	authHandler := handler.NewAuthHandler(authUseCase)
+	authHandler := handler.NewAuthHandler(authUseCase, auth0Service, jwtService)
 	notificationHandler := handler.NewNotificationHandler(notificationUseCase)
 	authMiddleware := middleware.NewAuthMiddleware(jwtService)
 

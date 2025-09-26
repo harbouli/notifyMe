@@ -13,6 +13,7 @@ type Config struct {
 	Database     DatabaseConfig
 	JWT          JWTConfig
 	Notification NotificationConfig
+	Auth0        Auth0Config
 }
 
 type ServerConfig struct {
@@ -56,6 +57,14 @@ type EmailConfig struct {
 	Enabled      bool
 }
 
+type Auth0Config struct {
+	Domain       string
+	ClientID     string
+	ClientSecret string
+	Audience     string
+	Enabled      bool
+}
+
 func Load() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 	}
@@ -94,9 +103,16 @@ func Load() (*Config, error) {
 				SMTPUsername: getEnv("SMTP_USERNAME", ""),
 				SMTPPassword: getEnv("SMTP_PASSWORD", ""),
 				FromEmail:    getEnv("FROM_EMAIL", ""),
-				FromName:     getEnv("FROM_NAME", "Hexagon App"),
+				FromName:     getEnv("FROM_NAME", "NotifyMe"),
 				Enabled:      getEnv("EMAIL_ENABLED", "false") == "true",
 			},
+		},
+		Auth0: Auth0Config{
+			Domain:       getEnv("AUTH0_DOMAIN", ""),
+			ClientID:     getEnv("AUTH0_CLIENT_ID", ""),
+			ClientSecret: getEnv("AUTH0_CLIENT_SECRET", ""),
+			Audience:     getEnv("AUTH0_AUDIENCE", ""),
+			Enabled:      getEnv("AUTH0_ENABLED", "false") == "true",
 		},
 	}, nil
 }

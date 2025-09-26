@@ -7,16 +7,18 @@ import (
 )
 
 type User struct {
-	ID           uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Email        string    `json:"email" gorm:"unique;not null"`
-	Username     string    `json:"username" gorm:"unique;not null"`
-	PasswordHash string    `json:"-" gorm:"not null"`
-	FirstName    string    `json:"first_name"`
-	LastName     string    `json:"last_name"`
-	FCMToken     string    `json:"fcm_token"`
-	IsActive     bool      `json:"is_active" gorm:"default:true"`
-	CreatedAt    time.Time `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt    time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	ID               uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	Email            string    `json:"email" gorm:"unique;not null"`
+	Username         string    `json:"username" gorm:"unique;not null"`
+	PasswordHash     string    `json:"-" gorm:""`
+	FirstName        string    `json:"first_name"`
+	LastName         string    `json:"last_name"`
+	FCMToken         string    `json:"fcm_token"`
+	ExternalID       string    `json:"external_id" gorm:"index"`
+	ExternalProvider string    `json:"external_provider"`
+	IsActive         bool      `json:"is_active" gorm:"default:true"`
+	CreatedAt        time.Time `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt        time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
 type RefreshToken struct {

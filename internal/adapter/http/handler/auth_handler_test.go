@@ -93,7 +93,7 @@ func createLoginResponse(user *entity.User) *usecase.LoginResponse {
 // Test Register endpoint
 func TestAuthHandler_Register_Success(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	user := createTestUser()
@@ -131,7 +131,7 @@ func TestAuthHandler_Register_Success(t *testing.T) {
 
 func TestAuthHandler_Register_InvalidJSON(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	router.POST("/register", handler.Register)
@@ -152,7 +152,7 @@ func TestAuthHandler_Register_InvalidJSON(t *testing.T) {
 
 func TestAuthHandler_Register_EmailAlreadyExists(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	registerReq := usecase.RegisterRequest{
@@ -186,7 +186,7 @@ func TestAuthHandler_Register_EmailAlreadyExists(t *testing.T) {
 // Test Login endpoint
 func TestAuthHandler_Login_Success(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	user := createTestUser()
@@ -222,7 +222,7 @@ func TestAuthHandler_Login_Success(t *testing.T) {
 
 func TestAuthHandler_Login_InvalidCredentials(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	loginReq := usecase.LoginRequest{
@@ -255,7 +255,7 @@ func TestAuthHandler_Login_InvalidCredentials(t *testing.T) {
 // Test RefreshToken endpoint
 func TestAuthHandler_RefreshToken_Success(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	user := createTestUser()
@@ -290,7 +290,7 @@ func TestAuthHandler_RefreshToken_Success(t *testing.T) {
 
 func TestAuthHandler_RefreshToken_InvalidToken(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	refreshReq := usecase.RefreshTokenRequest{
@@ -322,7 +322,7 @@ func TestAuthHandler_RefreshToken_InvalidToken(t *testing.T) {
 // Test Logout endpoint
 func TestAuthHandler_Logout_Success(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	userID := uuid.New()
@@ -353,7 +353,7 @@ func TestAuthHandler_Logout_Success(t *testing.T) {
 
 func TestAuthHandler_Logout_Unauthorized(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	router.POST("/logout", handler.Logout)
@@ -373,7 +373,7 @@ func TestAuthHandler_Logout_Unauthorized(t *testing.T) {
 // Test LogoutAll endpoint
 func TestAuthHandler_LogoutAll_Success(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	userID := uuid.New()
@@ -405,7 +405,7 @@ func TestAuthHandler_LogoutAll_Success(t *testing.T) {
 // Test GetProfile endpoint
 func TestAuthHandler_GetProfile_Success(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	userID := uuid.New()
@@ -439,7 +439,7 @@ func TestAuthHandler_GetProfile_Success(t *testing.T) {
 
 func TestAuthHandler_GetProfile_UserNotFound(t *testing.T) {
 	mockAuthUseCase := new(MockAuthUseCase)
-	handler := NewAuthHandler(mockAuthUseCase)
+	handler := NewAuthHandler(mockAuthUseCase, nil, nil)
 	router := setupGin()
 
 	userID := uuid.New()

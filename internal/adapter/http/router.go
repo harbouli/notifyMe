@@ -25,6 +25,10 @@ func SetupRoutes(
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/refresh", authHandler.RefreshToken)
 			
+			// Auth0 OAuth routes
+			auth.GET("/auth0/login", authHandler.Auth0Login)
+			auth.GET("/auth0/callback", authHandler.Auth0Callback)
+			
 			authorized := auth.Group("/")
 			authorized.Use(authMiddleware.RequireAuth())
 			{
