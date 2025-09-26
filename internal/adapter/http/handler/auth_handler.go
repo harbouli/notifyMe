@@ -1,19 +1,30 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"notifyMe/internal/application/usecase"
+	"notifyMe/internal/domain/entity"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-type AuthHandler struct {
-	authUseCase *usecase.AuthUseCase
+type AuthUseCaseInterface interface {
+	Register(ctx context.Context, req *usecase.RegisterRequest) (*entity.User, error)
+	Login(ctx context.Context, req *usecase.LoginRequest) (*usecase.LoginResponse, error)
+	RefreshTokens(ctx context.Context, req *usecase.RefreshTokenRequest) (*usecase.LoginResponse, error)
+	Logout(ctx context.Context, userID uuid.UUID) error
+	LogoutAll(ctx context.Context, userID uuid.UUID) error
+	GetProfile(ctx context.Context, userID uuid.UUID) (*entity.User, error)
 }
 
-func NewAuthHandler(authUseCase *usecase.AuthUseCase) *AuthHandler {
+type AuthHandler struct {
+	authUseCase AuthUseCaseInterface
+}
+
+func NewAuthHandler(authUseCase AuthUseCaseInterface) *AuthHandler {
 	return &AuthHandler{
 		authUseCase: authUseCase,
 	}
